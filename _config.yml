@@ -39,7 +39,7 @@ baseurl: "/ml-blog" # the subpath of your site, e.g. "/blog".
 # Github and twitter are optional:
 minima:
   social_links:
-    twitter: fastdotai
+    twitter: issam_ml
     github: issam9
 
 # Set this to true to get LaTeX math equation support
