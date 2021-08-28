@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | issam’s blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://issam9.github.io/ml-blog/2021/08/28/Darija-LM.html" />
+<meta property="og:url" content="https://issam9.github.io/ml-blog/2021/08/28/Darija-LM.html" />
+<meta property="og:site_name" content="issam’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-28T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://issam9.github.io/ml-blog/2021/08/28/Darija-LM.html","@type":"BlogPosting","headline":"Title","dateModified":"2021-08-28T00:00:00-05:00","datePublished":"2021-08-28T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://issam9.github.io/ml-blog/2021/08/28/Darija-LM.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/ml-blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://issam9.github.io/ml-blog/feed.xml" title="issam's blog" /><link rel="shortcut icon" type="image/x-icon" href="/ml-blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/ml-blog/">issam&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/ml-blog/about/">About Me</a><a class="page-link" href="/ml-blog/search/">Search</a><a class="page-link" href="/ml-blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Title</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-28T00:00:00-05:00" itemprop="datePublished">
+        Aug 28, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      16 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/issam9/ml-blog/tree/master/_notebooks/2021-08-28-Darija-LM.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/ml-blog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/issam9/ml-blog/master?filepath=_notebooks%2F2021-08-28-Darija-LM.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/ml-blog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/issam9/ml-blog/blob/master/_notebooks/2021-08-28-Darija-LM.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/ml-blog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-28-Darija-LM.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is a small effort to build a darija language model, i use Moroccan Darija Wikipedia to train an <a href="https://arxiv.org/abs/1708.02182">AWD_LSTM</a> model using fastai, it is a small dataset which means that this language model won't be perfect for language generation but it might be useful to finetune it on a task like text classification following the <a href="https://arxiv.org/abs/1801.06146">ULMFiT</a> approach, where you train a language model on Wikipedia text like we do in this notebook to gain some knowledge about the language of your choice, then finetune it on domain-specific data using the same objective of your pretrained language model, to bridge the gap between the language used in wikipedia text and the language used in your dataset(e.g., formal language -&gt; informal language), and finally, we finetune our language model on our task of text classification.</p>
+<p>This model can be improved by:</p>
+<ul>
+<li>Throwing more data at it of course</li>
+<li>Some text preprocessing</li>
+<li>Tuning the hyperparameters</li>
+<li>I thought also about pretraining on arabic which might be a good idea given the similarities between arabic and darija</li>
+</ul>
+<hr />
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's start by upgrading fastai and installing SentencePiece to use for subword tokenization</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">fastai</span> <span class="o">-</span><span class="n">q</span> <span class="o">--</span><span class="n">upgrade</span> 
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">sentencepiece</span><span class="o">!=</span><span class="mf">0.1</span><span class="o">.</span><span class="mi">90</span><span class="p">,</span><span class="o">!=</span><span class="mf">0.1</span><span class="o">.</span><span class="mi">91</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">gensim.corpora</span> <span class="kn">import</span> <span class="n">WikiCorpus</span>
+<span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive/&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount(&#34;/content/drive/&#34;, force_remount=True).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ml/projects/darija/&#39;</span><span class="p">)</span>
+<span class="n">dls_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">/</span><span class="s1">&#39;dls&#39;</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">/</span><span class="s1">&#39;models&#39;</span>
+<span class="n">spm_path</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">/</span><span class="s1">&#39;spm&#39;</span>
+
+<span class="n">dls_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spm_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is how we can download The Moroccan Darija Wikipedia data, it's available in this <a href="https://dumps.wikimedia.org/arywiki/20210520/">link</a></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">dumps</span><span class="o">.</span><span class="n">wikimedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">arywiki</span><span class="o">/</span><span class="n">latest</span><span class="o">/</span><span class="n">arywiki</span><span class="o">-</span><span class="n">latest</span><span class="o">-</span><span class="n">pages</span><span class="o">-</span><span class="n">articles</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">bz2</span> <span class="o">-</span><span class="n">O</span> <span class="s1">&#39;/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--2021-08-28 19:55:19--  https://dumps.wikimedia.org/arywiki/latest/arywiki-latest-pages-articles.xml.bz2
+Resolving dumps.wikimedia.org (dumps.wikimedia.org)... 208.80.154.7, 2620:0:861:1:208:80:154:7
+Connecting to dumps.wikimedia.org (dumps.wikimedia.org)|208.80.154.7|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4178623 (4.0M) [application/octet-stream]
+Saving to: ‘/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2’
+
+/content/drive/MyDr 100%[===================&gt;]   3.98M  5.61MB/s    in 0.7s    
+
+2021-08-28 19:55:20 (5.61 MB/s) - ‘/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2’ saved [4178623/4178623]
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We make use of <a href="https://radimrehurek.com/gensim/corpora/wikicorpus.html">WikiCorpus</a> from gensim to convert the XML file we downloaded to a text corpus.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">make_corpus</span><span class="p">(</span><span class="n">in_f</span><span class="p">,</span> <span class="n">out_f</span><span class="p">):</span>
+
+  <span class="sd">&quot;&quot;&quot;Convert Wikipedia xml dump file to text corpus&quot;&quot;&quot;</span>
+
+  <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_f</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+  <span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiCorpus</span><span class="p">(</span><span class="n">in_f</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wiki</span><span class="o">.</span><span class="n">get_texts</span><span class="p">()):</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processed &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; articles&#39;</span><span class="p">)</span>
+    
+  <span class="n">output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing complete!&#39;</span><span class="p">)</span>
+
+
+<span class="n">make_corpus</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/arywiki-latest-pages-articles.xml.bz2&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/wiki_darija.txt&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Processed 0 articles
+Processed 1000 articles
+Processed 2000 articles
+Processed 3000 articles
+Processing complete!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">path</span><span class="o">.</span><span class="n">ls</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#10) [Path(&#39;/content/drive/MyDrive/ml/projects/darija/arwiki.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/dls&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/models&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/arwiki-latest-pages-articles.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/wiki_arabic.txt&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/Untitled0.ipynb&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/Copie de darija_lm.ipynb&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/wiki_darija.txt&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/darija_lm.ipynb&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we load our text data as a pandas dataframe, and we take a look at it using the most advanced EDA technique 😄, we can see that there are words from other languages that will most likely disappear  due to their low frequency, and we can tell fastai the minimum word frequency (by default it’s 3) we can tolerate using fastai DataBlocks that we discuss below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;wiki_darija.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>آبطح جماعة ترابية قروية كاينة إقليم عمالة طان طان جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>آسفي بالأمازيغية ⴰⵙⴼⵉ هي مدينة مغربية جات إقليم آسفي جهة مراكش آسفي آسفي معروفة بالفخار والحوت وخصوصا السردين ومكنيين عليها حاضرة المحيط الحطة ديال آسفي جات كاطل على المحيط الأطلسي بين الجديدة والصويرة في آسفي كاين بزاف دالبني لي قديم وتاريخي وهي من بين المدون القديمة في المغرب ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خد...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>آلبرخت دورر بالألمانية albrecht dürer ماي أبريل رسام صانع طباعة وم كاينتامي لعصر النهضة الألمانية تزاد في نورمبرݣ دورر أسس للسمعة والتأثير ديالو عبر أوروبا فالوقت اللي مازالا فالعشرينات من عمرو نتيجة لجودة نقوشاتو الخشبية كان فاتصال مع أكبر الفنانين الإيطاليين فالعصر ديالو بما فيهم رفائيل جيوڤاني بيليني وليوناردو دا ڤينتشي وابتداء من كان كي اخد الدعم من عند الإمبراطور ماكسيميليان الأول تم تشييع دورر فالكنيستين اللوثرية والأسقفية بجوج كتشمل مجموعة أعمال دورر الواسعة النقوش أسلوبو المفضل في طبعاتو الأخيرة الأعمال الفنية فالكنائس altarpieces پورتريهات پورتريهات ذاتية لوحات مائية وك النقوش الخ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>آمتدي جماعة ترابية قروية كاينة إقليم عمالة ݣلميم جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>آنفݣ جماعة ترابية قروية كاينة إقليم عمالة سيدي إيفني جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Subword tokenization refers to constructing our vocabulary using the most frequently occurring groups of letters, for instance, the word “transformer” could be split into “trans” and “former”. I find it better to use subword tokenization with a relatively smaller vocabulary size in the case of a small dataset, to avoid the p&gt;&gt;n problem (where the number of features exceeds the number of training examples), and also because if we decide to use words as our tokens, we are going to have a lot of words that appear only a few times throughout the corpus, and the model won’t be given a decent chance to learn about them.</p>
+<p>I use a maximum vocab size (max_vocab_sz) of 1000 but you can use less or more, its another hyperparamter you can tune based on the metric you care about.</p>
+<p>The data block API is provided by fastai to customize the creation of our dataloaders, <code>blocks</code> parameter is used to specify the type of our independent and dependent variables, when <code>TextBlock</code> is passed, fastai takes care of preprocessing for us, we just need to pass it our subword tokenizer since it uses word tokenization by default, we also tell fastai that we are building this for a language modeling with <code>is_lm</code> and that our text is in a dataframe.</p>
+<p>And finally we create our dataloaders, it's a dataloader with s because it includes the training and validation dataloaders.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">bs</span><span class="o">=</span><span class="mi">128</span>
+
+<span class="n">tok</span> <span class="o">=</span> <span class="n">SubwordTokenizer</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">=</span><span class="n">spm_path</span><span class="p">,</span> <span class="n">max_vocab_sz</span><span class="o">=</span><span class="mi">10_00</span><span class="p">)</span>
+
+<span class="n">dls_lm</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">is_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tok</span><span class="o">=</span><span class="n">tok</span><span class="p">),</span>
+                   <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+                   <span class="n">get_x</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+                   <span class="p">)</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.7/dist-packages/numpy/core/_asarray.py:83: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
+  return array(a, dtype, copy=False, order=order)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We save our dataloader since we can't afford to create it each time because of our huge dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">dls_path</span><span class="o">/</span><span class="s1">&#39;dls_lm.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is how our preprocessed text looks like, spaces in the original text are replaced by ▁, xxbos is a special token added by fastai to signify the beginning of a sentence, fastai also adds other special tokens to make learning easier for the model, we can see them when we check our vocab below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+      <th>text_</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>▁xxbos ▁لأعض اء ▁منضم ة ▁التعاون ▁شانݣ اي ▁لمنضم ة ▁التعاون ▁شانݣ اي ▁هي ▁منضم ة ▁دولية ▁سياسية ▁قتصاد ية ▁أمن ية ▁تأسس ات ▁نهار ▁ يونيو ▁شانݣ اي ▁من ▁لبلدان ▁هي ▁الشينوا ▁كازاخ ستان ▁ كيرݣي ستان ▁روسيا ▁ طادجيكي ستان ▁أوزباك ستان ▁هاد ▁لبلدان ▁كامل ة ▁من ▁غير ▁أوزباك ستان ▁كانت ▁داخل ة ▁مع ▁مجموع ة ▁شانݣ اي ▁لخ ماس ية ▁اللي ▁تأسس ات ▁أبر يل ▁شانݣ اي ▁نيت ▁من</td>
+      <td>▁لأعض اء ▁منضم ة ▁التعاون ▁شانݣ اي ▁لمنضم ة ▁التعاون ▁شانݣ اي ▁هي ▁منضم ة ▁دولية ▁سياسية ▁قتصاد ية ▁أمن ية ▁تأسس ات ▁نهار ▁ يونيو ▁شانݣ اي ▁من ▁لبلدان ▁هي ▁الشينوا ▁كازاخ ستان ▁ كيرݣي ستان ▁روسيا ▁ طادجيكي ستان ▁أوزباك ستان ▁هاد ▁لبلدان ▁كامل ة ▁من ▁غير ▁أوزباك ستان ▁كانت ▁داخل ة ▁مع ▁مجموع ة ▁شانݣ اي ▁لخ ماس ية ▁اللي ▁تأسس ات ▁أبر يل ▁شانݣ اي ▁نيت ▁من ▁داب</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>▁خت ها ▁زي ادا تان ▁لشي ▁أفلام ▁سينمائي ة ▁عيون ▁لكلام ▁تصنيف ▁ممتل ة ▁مغريبية ▁xxbos ▁محمد ▁مشا لي ▁تزاد ▁توف ى ▁يوليو ز ▁هو ▁طبيب ▁مصري ▁متخصص ▁طب ▁لباط ني ▁و تعرف ▁طبيب ▁لفقر اء ▁ݣ راف يتي ▁مدين ة ▁لمحمدي ة ▁لمغريب ▁داروه ▁مجموع ة ▁من ▁شباب ▁تكريم ا ▁طبيب ▁لمصري ▁محمد ▁مشا لي ▁نشرات و ▁ جريد ة ▁ال عمق ▁لقراي ة ▁تزاد ▁محمد ▁مشا لي ▁محافض ة ▁لبح</td>
+      <td>ها ▁زي ادا تان ▁لشي ▁أفلام ▁سينمائي ة ▁عيون ▁لكلام ▁تصنيف ▁ممتل ة ▁مغريبية ▁xxbos ▁محمد ▁مشا لي ▁تزاد ▁توف ى ▁يوليو ز ▁هو ▁طبيب ▁مصري ▁متخصص ▁طب ▁لباط ني ▁و تعرف ▁طبيب ▁لفقر اء ▁ݣ راف يتي ▁مدين ة ▁لمحمدي ة ▁لمغريب ▁داروه ▁مجموع ة ▁من ▁شباب ▁تكريم ا ▁طبيب ▁لمصري ▁محمد ▁مشا لي ▁نشرات و ▁ جريد ة ▁ال عمق ▁لقراي ة ▁تزاد ▁محمد ▁مشا لي ▁محافض ة ▁لبح ير</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>▁ محاكم ة ▁عادل ة ▁لحق ▁لحري ة ▁التعبير ▁لحق ▁لحباس ة ▁الت طبيب ▁ضروف ▁مزيان ة ▁ل حبس ▁لحق ▁ال تنظيم ▁ج ت ماع ات ▁عيون ▁لكلام ▁لمزا ود ▁لم وقع ▁ديال ▁لجمعي ة ▁لمغربي ة ▁لحقوق ▁لإنسان ▁تصنيف ▁حقوق ▁لإنسان ▁تصنيف ▁جمعي ة ▁مغريبية ▁xxbos ▁آݣد ز ▁جماع ة ▁ترابية ▁حضري ة ▁كاين ة ▁إقليم ▁عمال ة ▁زاݣور ة ▁جه ة ▁درع ا ▁تافيلالت ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب</td>
+      <td>محاكم ة ▁عادل ة ▁لحق ▁لحري ة ▁التعبير ▁لحق ▁لحباس ة ▁الت طبيب ▁ضروف ▁مزيان ة ▁ل حبس ▁لحق ▁ال تنظيم ▁ج ت ماع ات ▁عيون ▁لكلام ▁لمزا ود ▁لم وقع ▁ديال ▁لجمعي ة ▁لمغربي ة ▁لحقوق ▁لإنسان ▁تصنيف ▁حقوق ▁لإنسان ▁تصنيف ▁جمعي ة ▁مغريبية ▁xxbos ▁آݣد ز ▁جماع ة ▁ترابية ▁حضري ة ▁كاين ة ▁إقليم ▁عمال ة ▁زاݣور ة ▁جه ة ▁درع ا ▁تافيلالت ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب ▁ل</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>▁تايق لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁ولا ▁لعاط لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁نسبة ▁اس ▁اللي ▁خدامين ▁في ▁لقطاع ▁لخاص ▁ولا ▁لعاط لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁الرباط ▁سلا ▁القنيطرة ▁xxbos ▁پيك ين ▁لا ▁ب يجين ݣ ▁الشينوي ة ▁ 北 京 ▁هي ▁ل عاصم ة ▁ديال ▁الشينوا ▁تاني ▁أكب ر ▁مدين ة ▁فيها ▁مورا ▁شانݣ هاي ▁پيك ين</td>
+      <td>لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁ولا ▁لعاط لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁نسبة ▁اس ▁اللي ▁خدامين ▁في ▁لقطاع ▁لخاص ▁ولا ▁لعاط لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁الرباط ▁سلا ▁القنيطرة ▁xxbos ▁پيك ين ▁لا ▁ب يجين ݣ ▁الشينوي ة ▁ 北 京 ▁هي ▁ل عاصم ة ▁ديال ▁الشينوا ▁تاني ▁أكب ر ▁مدين ة ▁فيها ▁مورا ▁شانݣ هاي ▁پيك ين ▁هي</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>▁كامل ين ▁مع م ▁رين ▁أ جهز ة ▁لمراقب ة ▁ل حض ية ▁لخو ▁لكبير ▁عم ▁رو ▁ما ▁كايبان ▁ديما ▁كايت ص و ▁وجه ▁راجل ▁عندو ▁عام ▁ل اغ م ▁كايشوف ▁لعينين ▁ نيشان ▁واحد ▁كل ▁كاي ر هب ▁عل ى ▁حساب ▁يواي ة ▁سمي ة ▁لخو ▁لكبير ▁هو ▁أس ▁لحي زب ▁لوحيد ▁لبلاد ▁عندو ▁بز ▁اف ▁لبوطول ات ▁لإنجاز ات ▁الثور ية ▁لحرب ية ▁لقضي ة ▁ديال ▁أنه ▁كايبقا ▁ديما ▁صغير</td>
+      <td>ين ▁مع م ▁رين ▁أ جهز ة ▁لمراقب ة ▁ل حض ية ▁لخو ▁لكبير ▁عم ▁رو ▁ما ▁كايبان ▁ديما ▁كايت ص و ▁وجه ▁راجل ▁عندو ▁عام ▁ل اغ م ▁كايشوف ▁لعينين ▁ نيشان ▁واحد ▁كل ▁كاي ر هب ▁عل ى ▁حساب ▁يواي ة ▁سمي ة ▁لخو ▁لكبير ▁هو ▁أس ▁لحي زب ▁لوحيد ▁لبلاد ▁عندو ▁بز ▁اف ▁لبوطول ات ▁لإنجاز ات ▁الثور ية ▁لحرب ية ▁لقضي ة ▁ديال ▁أنه ▁كايبقا ▁ديما ▁صغير ▁سب</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>ة ▁تين غير ▁جه ة ▁درع ا ▁تافيلالت ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب ▁ل إحصاء ▁لعام ▁تعليم ▁نسبة ▁لأمي ة ▁اس ▁ما ▁كايعرفو ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة ▁اس ▁ما ▁خدامين ش ▁تايق لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁نسبة ▁اس ▁اللي ▁خدامين</td>
+      <td>▁تين غير ▁جه ة ▁درع ا ▁تافيلالت ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب ▁ل إحصاء ▁لعام ▁تعليم ▁نسبة ▁لأمي ة ▁اس ▁ما ▁كايعرفو ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة ▁اس ▁ما ▁خدامين ش ▁تايق لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁في</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">dls_lm</span><span class="o">.</span><span class="n">vocab</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;xxunk&#39;, &#39;xxpad&#39;, &#39;xxbos&#39;, &#39;xxeos&#39;, &#39;xxfld&#39;, &#39;xxrep&#39;, &#39;xxwrep&#39;, &#39;xxup&#39;, &#39;xxmaj&#39;, &#39;ة&#39;, &#39;▁&#39;, &#39;▁ل&#39;, &#39;و&#39;, &#39;▁ديال&#39;, &#39;▁ال&#39;, &#39;▁اللي&#39;, &#39;ات&#39;, &#39;ا&#39;, &#39;▁نسبة&#39;, &#39;▁من&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">language_model_learner</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> 
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">Perplexity</span><span class="p">()],</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.7/dist-packages/torch/cuda/amp/autocast_mode.py:120: UserWarning: torch.cuda.amp.autocast only affects CUDA ops, but CUDA is not available.  Disabling.
+  warnings.warn(&#34;torch.cuda.amp.autocast only affects CUDA ops, but CUDA is not available.  Disabling.&#34;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.7/dist-packages/torch/cuda/amp/grad_scaler.py:115: UserWarning: torch.cuda.amp.GradScaler is enabled, but CUDA is not available.  Disabling.
+  warnings.warn(&#34;torch.cuda.amp.GradScaler is enabled, but CUDA is not available.  Disabling.&#34;)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="0" class="" max="5" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/5 00:00&lt;00:00]
+    </div>
+    
+
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="0" class="" max="24" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/24 00:00&lt;00:00]
+    </div>
+    
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>perplexity</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>5.834657</td>
+      <td>5.780706</td>
+      <td>0.050297</td>
+      <td>323.987976</td>
+      <td>00:27</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>5.786645</td>
+      <td>5.777408</td>
+      <td>0.046491</td>
+      <td>322.920990</td>
+      <td>00:27</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>5.771509</td>
+      <td>5.716337</td>
+      <td>0.057275</td>
+      <td>303.790161</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>5.335208</td>
+      <td>5.050761</td>
+      <td>0.110819</td>
+      <td>156.141281</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>4.643136</td>
+      <td>4.369634</td>
+      <td>0.198885</td>
+      <td>79.014679</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>4.215887</td>
+      <td>4.142004</td>
+      <td>0.225452</td>
+      <td>62.928776</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3.989751</td>
+      <td>3.972366</td>
+      <td>0.243707</td>
+      <td>53.110031</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>3.835457</td>
+      <td>3.810618</td>
+      <td>0.269873</td>
+      <td>45.178349</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3.643807</td>
+      <td>3.611234</td>
+      <td>0.298628</td>
+      <td>37.011711</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>3.452805</td>
+      <td>3.463478</td>
+      <td>0.321055</td>
+      <td>31.927832</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>3.270783</td>
+      <td>3.327179</td>
+      <td>0.344084</td>
+      <td>27.859652</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>3.163763</td>
+      <td>3.232886</td>
+      <td>0.359108</td>
+      <td>25.352715</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>3.045434</td>
+      <td>3.159597</td>
+      <td>0.370843</td>
+      <td>23.561092</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>2.966490</td>
+      <td>3.126066</td>
+      <td>0.377128</td>
+      <td>22.784180</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>2.902631</td>
+      <td>3.073609</td>
+      <td>0.385408</td>
+      <td>21.619785</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>2.820757</td>
+      <td>3.046120</td>
+      <td>0.389740</td>
+      <td>21.033569</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>2.777062</td>
+      <td>3.038635</td>
+      <td>0.390358</td>
+      <td>20.876738</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>2.769229</td>
+      <td>3.030882</td>
+      <td>0.392879</td>
+      <td>20.715488</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>2.796158</td>
+      <td>3.030480</td>
+      <td>0.392528</td>
+      <td>20.707178</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>2.793638</td>
+      <td>3.011434</td>
+      <td>0.396384</td>
+      <td>20.316509</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>2.783323</td>
+      <td>3.030766</td>
+      <td>0.389189</td>
+      <td>20.713087</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>2.814245</td>
+      <td>3.043278</td>
+      <td>0.392528</td>
+      <td>20.973883</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>22</td>
+      <td>2.837232</td>
+      <td>3.032581</td>
+      <td>0.391360</td>
+      <td>20.750729</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>23</td>
+      <td>2.936250</td>
+      <td>3.106416</td>
+      <td>0.380500</td>
+      <td>22.340832</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>24</td>
+      <td>2.947105</td>
+      <td>3.058279</td>
+      <td>0.389131</td>
+      <td>21.290874</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>25</td>
+      <td>2.898855</td>
+      <td>3.050217</td>
+      <td>0.388305</td>
+      <td>21.119930</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>26</td>
+      <td>2.894289</td>
+      <td>3.040450</td>
+      <td>0.390124</td>
+      <td>20.914650</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>27</td>
+      <td>2.872150</td>
+      <td>3.036854</td>
+      <td>0.391802</td>
+      <td>20.839584</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>28</td>
+      <td>2.889433</td>
+      <td>3.027228</td>
+      <td>0.394306</td>
+      <td>20.639946</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>29</td>
+      <td>2.867410</td>
+      <td>3.006690</td>
+      <td>0.397544</td>
+      <td>20.220360</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>2.862009</td>
+      <td>3.016624</td>
+      <td>0.393505</td>
+      <td>20.422239</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>31</td>
+      <td>2.810327</td>
+      <td>2.991279</td>
+      <td>0.399030</td>
+      <td>19.911135</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>32</td>
+      <td>2.792699</td>
+      <td>2.978555</td>
+      <td>0.400232</td>
+      <td>19.659397</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>33</td>
+      <td>2.754105</td>
+      <td>2.975938</td>
+      <td>0.403512</td>
+      <td>19.608009</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>34</td>
+      <td>2.734813</td>
+      <td>2.960950</td>
+      <td>0.403996</td>
+      <td>19.316311</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>35</td>
+      <td>2.723893</td>
+      <td>2.951143</td>
+      <td>0.405866</td>
+      <td>19.127806</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>36</td>
+      <td>2.699175</td>
+      <td>2.936934</td>
+      <td>0.405415</td>
+      <td>18.857944</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>37</td>
+      <td>2.665997</td>
+      <td>2.928869</td>
+      <td>0.409054</td>
+      <td>18.706461</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>38</td>
+      <td>2.654328</td>
+      <td>2.930508</td>
+      <td>0.410215</td>
+      <td>18.737141</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>39</td>
+      <td>2.636740</td>
+      <td>2.919134</td>
+      <td>0.410332</td>
+      <td>18.525244</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>40</td>
+      <td>2.618056</td>
+      <td>2.898964</td>
+      <td>0.415306</td>
+      <td>18.155334</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>41</td>
+      <td>2.591700</td>
+      <td>2.903557</td>
+      <td>0.415173</td>
+      <td>18.238911</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>42</td>
+      <td>2.570820</td>
+      <td>2.898409</td>
+      <td>0.416867</td>
+      <td>18.145260</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td>2.565726</td>
+      <td>2.887301</td>
+      <td>0.418194</td>
+      <td>17.944815</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>44</td>
+      <td>2.519047</td>
+      <td>2.891924</td>
+      <td>0.418954</td>
+      <td>18.027956</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>2.512617</td>
+      <td>2.878029</td>
+      <td>0.422309</td>
+      <td>17.779202</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>2.476611</td>
+      <td>2.871087</td>
+      <td>0.422760</td>
+      <td>17.656193</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>47</td>
+      <td>2.476407</td>
+      <td>2.859713</td>
+      <td>0.424095</td>
+      <td>17.456518</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>2.461777</td>
+      <td>2.860327</td>
+      <td>0.425197</td>
+      <td>17.467230</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>49</td>
+      <td>2.427959</td>
+      <td>2.855028</td>
+      <td>0.427058</td>
+      <td>17.374922</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>2.423167</td>
+      <td>2.854318</td>
+      <td>0.426950</td>
+      <td>17.362591</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>51</td>
+      <td>2.403222</td>
+      <td>2.848868</td>
+      <td>0.428544</td>
+      <td>17.268225</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>52</td>
+      <td>2.364372</td>
+      <td>2.843947</td>
+      <td>0.429779</td>
+      <td>17.183455</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>53</td>
+      <td>2.362134</td>
+      <td>2.845242</td>
+      <td>0.429863</td>
+      <td>17.205723</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>54</td>
+      <td>2.346170</td>
+      <td>2.838448</td>
+      <td>0.431757</td>
+      <td>17.089224</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>55</td>
+      <td>2.329833</td>
+      <td>2.831658</td>
+      <td>0.433076</td>
+      <td>16.973577</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>56</td>
+      <td>2.304311</td>
+      <td>2.836959</td>
+      <td>0.432409</td>
+      <td>17.063789</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>57</td>
+      <td>2.300721</td>
+      <td>2.836190</td>
+      <td>0.434120</td>
+      <td>17.050686</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>58</td>
+      <td>2.285471</td>
+      <td>2.830706</td>
+      <td>0.435555</td>
+      <td>16.957430</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>59</td>
+      <td>2.256822</td>
+      <td>2.834683</td>
+      <td>0.434796</td>
+      <td>17.025009</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>60</td>
+      <td>2.243629</td>
+      <td>2.833736</td>
+      <td>0.435964</td>
+      <td>17.008886</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>61</td>
+      <td>2.218404</td>
+      <td>2.830714</td>
+      <td>0.437133</td>
+      <td>16.957567</td>
+      <td>00:29</td>
+    </tr>
+    <tr>
+      <td>62</td>
+      <td>2.175385</td>
+      <td>2.835139</td>
+      <td>0.437784</td>
+      <td>17.032772</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>63</td>
+      <td>2.158951</td>
+      <td>2.826954</td>
+      <td>0.436966</td>
+      <td>16.893930</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>2.163277</td>
+      <td>2.830947</td>
+      <td>0.437759</td>
+      <td>16.961510</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>65</td>
+      <td>2.142468</td>
+      <td>2.824928</td>
+      <td>0.439837</td>
+      <td>16.859735</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>66</td>
+      <td>2.131182</td>
+      <td>2.832768</td>
+      <td>0.439620</td>
+      <td>16.992439</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>67</td>
+      <td>2.105347</td>
+      <td>2.835190</td>
+      <td>0.440113</td>
+      <td>17.033638</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>68</td>
+      <td>2.092000</td>
+      <td>2.836043</td>
+      <td>0.438911</td>
+      <td>17.048178</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>69</td>
+      <td>2.090728</td>
+      <td>2.829720</td>
+      <td>0.441022</td>
+      <td>16.940714</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>70</td>
+      <td>2.069707</td>
+      <td>2.839312</td>
+      <td>0.442299</td>
+      <td>17.104000</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>71</td>
+      <td>2.044070</td>
+      <td>2.838725</td>
+      <td>0.442825</td>
+      <td>17.093950</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>72</td>
+      <td>2.038418</td>
+      <td>2.836995</td>
+      <td>0.443359</td>
+      <td>17.064417</td>
+      <td>00:29</td>
+    </tr>
+    <tr>
+      <td>73</td>
+      <td>2.028739</td>
+      <td>2.839885</td>
+      <td>0.442934</td>
+      <td>17.113806</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>74</td>
+      <td>2.015540</td>
+      <td>2.840894</td>
+      <td>0.443176</td>
+      <td>17.131083</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>75</td>
+      <td>1.994676</td>
+      <td>2.840110</td>
+      <td>0.444603</td>
+      <td>17.117641</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>76</td>
+      <td>1.978677</td>
+      <td>2.847067</td>
+      <td>0.444061</td>
+      <td>17.237144</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>77</td>
+      <td>1.965618</td>
+      <td>2.847578</td>
+      <td>0.443393</td>
+      <td>17.245958</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>78</td>
+      <td>1.946630</td>
+      <td>2.845117</td>
+      <td>0.443985</td>
+      <td>17.203577</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>79</td>
+      <td>1.955866</td>
+      <td>2.846086</td>
+      <td>0.444578</td>
+      <td>17.220251</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>80</td>
+      <td>1.925109</td>
+      <td>2.845089</td>
+      <td>0.445646</td>
+      <td>17.203085</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>81</td>
+      <td>1.920809</td>
+      <td>2.849102</td>
+      <td>0.445755</td>
+      <td>17.272268</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>82</td>
+      <td>1.903838</td>
+      <td>2.847912</td>
+      <td>0.445763</td>
+      <td>17.251720</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>83</td>
+      <td>1.906474</td>
+      <td>2.852767</td>
+      <td>0.446406</td>
+      <td>17.335674</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>84</td>
+      <td>1.904742</td>
+      <td>2.848892</td>
+      <td>0.446080</td>
+      <td>17.268641</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>85</td>
+      <td>1.904142</td>
+      <td>2.850545</td>
+      <td>0.446531</td>
+      <td>17.297205</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>86</td>
+      <td>1.877277</td>
+      <td>2.851864</td>
+      <td>0.446239</td>
+      <td>17.320030</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>87</td>
+      <td>1.874297</td>
+      <td>2.851761</td>
+      <td>0.446356</td>
+      <td>17.318247</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>88</td>
+      <td>1.869577</td>
+      <td>2.852247</td>
+      <td>0.446481</td>
+      <td>17.326664</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>89</td>
+      <td>1.859170</td>
+      <td>2.852836</td>
+      <td>0.446907</td>
+      <td>17.336874</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>90</td>
+      <td>1.851207</td>
+      <td>2.854492</td>
+      <td>0.446556</td>
+      <td>17.365616</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>91</td>
+      <td>1.852747</td>
+      <td>2.855567</td>
+      <td>0.446957</td>
+      <td>17.384291</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>92</td>
+      <td>1.856752</td>
+      <td>2.856290</td>
+      <td>0.446907</td>
+      <td>17.396866</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>93</td>
+      <td>1.838363</td>
+      <td>2.855285</td>
+      <td>0.446631</td>
+      <td>17.379396</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>94</td>
+      <td>1.844568</td>
+      <td>2.856256</td>
+      <td>0.446957</td>
+      <td>17.396278</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>95</td>
+      <td>1.836987</td>
+      <td>2.856410</td>
+      <td>0.446890</td>
+      <td>17.398949</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>96</td>
+      <td>1.850361</td>
+      <td>2.856547</td>
+      <td>0.446815</td>
+      <td>17.401339</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>97</td>
+      <td>1.855371</td>
+      <td>2.856554</td>
+      <td>0.446882</td>
+      <td>17.401455</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>98</td>
+      <td>1.837600</td>
+      <td>2.856627</td>
+      <td>0.446890</td>
+      <td>17.402733</td>
+      <td>00:26</td>
+    </tr>
+    <tr>
+      <td>99</td>
+      <td>1.841990</td>
+      <td>2.856612</td>
+      <td>0.446890</td>
+      <td>17.402472</td>
+      <td>00:26</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="o">/</span><span class="s1">&#39;darija_lm_100&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Path(&#39;/content/drive/MyDrive/ml/projects/darija/models/darija_lm_100.pth&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">decoder</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;▁&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;على حسب لإحصاء لعام&#39;</span>
+<span class="n">n_words</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_sentences</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">n_words</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sentences</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">preds</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39; xxbos على حسب لإحصاء لعام تابعة للنظام ديال لإسلام للمنطقة لحمر فيها ربعا ليستيقلال ديالها شمال إفريقيا لجزائر وعاصمة دزاير تونس جنوب شرقي ديال تلاتة لمليون ليلى فلبلاد هي لعاصمة ديالها هي لينثان اللغة الرسمية فلبلاد هوما النݣليزية لفرانساوية لينݣليزية لفلوس اللي كاتخد هي لكولون أوݣ&#39;,
+ &#39; xxbos على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو مصادر تصنيف جهة الشرق xxbos هشام السنوي خلاق دجنبر توفا كوايري مغربي&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><a class="u-url" href="/ml-blog/2021/08/28/Darija-LM.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/ml-blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/ml-blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/ml-blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p></p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/issam9" title="issam9"><svg class="svg-icon grey"><use xlink:href="/ml-blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/issam_ml" title="issam_ml"><svg class="svg-icon grey"><use xlink:href="/ml-blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
