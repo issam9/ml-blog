@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Building a language model for Moroccan Darija using fastai | issam’s blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Building a language model for Moroccan Darija using fastai" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://issam9.github.io/ml-blog/2021/08/29/Darija-LM.html" />
+<meta property="og:url" content="https://issam9.github.io/ml-blog/2021/08/29/Darija-LM.html" />
+<meta property="og:site_name" content="issam’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-29T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://issam9.github.io/ml-blog/2021/08/29/Darija-LM.html","@type":"BlogPosting","headline":"Building a language model for Moroccan Darija using fastai","dateModified":"2021-08-29T00:00:00-05:00","datePublished":"2021-08-29T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://issam9.github.io/ml-blog/2021/08/29/Darija-LM.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/ml-blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://issam9.github.io/ml-blog/feed.xml" title="issam's blog" /><link rel="shortcut icon" type="image/x-icon" href="/ml-blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/ml-blog/">issam&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/ml-blog/about/">About Me</a><a class="page-link" href="/ml-blog/search/">Search</a><a class="page-link" href="/ml-blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Building a language model for Moroccan Darija using fastai</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-29T00:00:00-05:00" itemprop="datePublished">
+        Aug 29, 2021
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      17 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/issam9/ml-blog/tree/master/_notebooks/2021-08-29-Darija-LM.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/ml-blog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/issam9/ml-blog/master?filepath=_notebooks%2F2021-08-29-Darija-LM.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/ml-blog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/issam9/ml-blog/blob/master/_notebooks/2021-08-29-Darija-LM.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/ml-blog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-29-Darija-LM.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is a small effort to build a darija language model, i use Moroccan Darija Wikipedia to train an <a href="https://arxiv.org/abs/1708.02182">AWD_LSTM</a> model using fastai, it is a small dataset which means that this language model won't be perfect for language generation but it might be useful to finetune it on a task like text classification following the <a href="https://arxiv.org/abs/1801.06146">ULMFiT</a> approach, where you train a language model on Wikipedia text like we do in this notebook to gain some knowledge about the language of your choice, then finetune it on domain-specific data using the same objective of your pretrained language model, in order to bridge the gap between the language used in wikipedia text and the language used in your dataset (e.g., formal language -&gt; informal language), and finally, finetune the language model on the task of your choice.</p>
+<p>This model can be improved by:</p>
+<ul>
+<li>Throwing more data at it of course</li>
+<li>Some text preprocessing</li>
+<li>Tuning the hyperparameters</li>
+<li>I thought also about pretraining on arabic which might be a good idea given the similarities between arabic and darija</li>
+</ul>
+<hr />
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's start by upgrading fastai and installing SentencePiece to use for subword tokenization:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">fastai</span> <span class="o">-</span><span class="n">q</span> <span class="o">--</span><span class="n">upgrade</span> 
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">sentencepiece</span><span class="o">!=</span><span class="mf">0.1</span><span class="o">.</span><span class="mi">90</span><span class="p">,</span><span class="o">!=</span><span class="mf">0.1</span><span class="o">.</span><span class="mi">91</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">gensim.corpora</span> <span class="kn">import</span> <span class="n">WikiCorpus</span>
+<span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive/&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Drive already mounted at /content/drive/; to attempt to forcibly remount, call drive.mount(&#34;/content/drive/&#34;, force_remount=True).
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/drive/MyDrive/ml/projects/darija/&#39;</span><span class="p">)</span>
+<span class="n">dls_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">/</span><span class="s1">&#39;dls&#39;</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">/</span><span class="s1">&#39;models&#39;</span>
+<span class="n">spm_path</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">/</span><span class="s1">&#39;spm&#39;</span>
+
+<span class="n">dls_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spm_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is how we can download The Moroccan Darija Wikipedia data, it's available in this <a href="https://dumps.wikimedia.org/arywiki/20210520/">link</a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">dumps</span><span class="o">.</span><span class="n">wikimedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">arywiki</span><span class="o">/</span><span class="n">latest</span><span class="o">/</span><span class="n">arywiki</span><span class="o">-</span><span class="n">latest</span><span class="o">-</span><span class="n">pages</span><span class="o">-</span><span class="n">articles</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">bz2</span> <span class="o">-</span><span class="n">O</span> <span class="s1">&#39;/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--2021-08-29 19:53:23--  https://dumps.wikimedia.org/arywiki/latest/arywiki-latest-pages-articles.xml.bz2
+Resolving dumps.wikimedia.org (dumps.wikimedia.org)... 208.80.154.7, 2620:0:861:1:208:80:154:7
+Connecting to dumps.wikimedia.org (dumps.wikimedia.org)|208.80.154.7|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4178623 (4.0M) [application/octet-stream]
+Saving to: ‘/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2’
+
+/content/drive/MyDr 100%[===================&gt;]   3.98M  5.23MB/s    in 0.8s    
+
+2021-08-29 19:53:24 (5.23 MB/s) - ‘/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2’ saved [4178623/4178623]
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We make use of <a href="https://radimrehurek.com/gensim/corpora/wikicorpus.html">WikiCorpus</a> from gensim to convert the XML file we downloaded to a text corpus.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">make_corpus</span><span class="p">(</span><span class="n">in_f</span><span class="p">,</span> <span class="n">out_f</span><span class="p">):</span>
+
+  <span class="sd">&quot;&quot;&quot;Convert Wikipedia xml dump file to text corpus&quot;&quot;&quot;</span>
+
+  <span class="n">output</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_f</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+  <span class="n">wiki</span> <span class="o">=</span> <span class="n">WikiCorpus</span><span class="p">(</span><span class="n">in_f</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wiki</span><span class="o">.</span><span class="n">get_texts</span><span class="p">()):</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processed &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; articles&#39;</span><span class="p">)</span>
+    
+  <span class="n">output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing complete!&#39;</span><span class="p">)</span>
+
+
+<span class="n">make_corpus</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/arywiki-latest-pages-articles.xml.bz2&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/wiki_darija.txt&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Processed 0 articles
+Processed 1000 articles
+Processed 2000 articles
+Processed 3000 articles
+Processing complete!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">path</span><span class="o">.</span><span class="n">ls</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#10) [Path(&#39;/content/drive/MyDrive/ml/projects/darija/arwiki.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/dls&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/models&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/arwiki-latest-pages-articles.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/wiki_arabic.txt&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/Untitled0.ipynb&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/Copie de darija_lm.ipynb&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/arywiki-latest-pages-articles.xml.bz2&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/wiki_darija.txt&#39;),Path(&#39;/content/drive/MyDrive/ml/projects/darija/darija_lm.ipynb&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we load our text data as a pandas dataframe, and we take a look at it using the most advanced EDA technique 😄, we can see that there are words from other languages that will most likely disappear  due to their low frequency, and we can tell fastai the minimum word frequency (by default it’s 3) we can tolerate using fastai DataBlocks that we discuss below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;wiki_darija.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>آبطح جماعة ترابية قروية كاينة إقليم عمالة طان طان جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>آسفي بالأمازيغية ⴰⵙⴼⵉ هي مدينة مغربية جات إقليم آسفي جهة مراكش آسفي آسفي معروفة بالفخار والحوت وخصوصا السردين ومكنيين عليها حاضرة المحيط الحطة ديال آسفي جات كاطل على المحيط الأطلسي بين الجديدة والصويرة في آسفي كاين بزاف دالبني لي قديم وتاريخي وهي من بين المدون القديمة في المغرب ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خد...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>آلبرخت دورر بالألمانية albrecht dürer ماي أبريل رسام صانع طباعة وم كاينتامي لعصر النهضة الألمانية تزاد في نورمبرݣ دورر أسس للسمعة والتأثير ديالو عبر أوروبا فالوقت اللي مازالا فالعشرينات من عمرو نتيجة لجودة نقوشاتو الخشبية كان فاتصال مع أكبر الفنانين الإيطاليين فالعصر ديالو بما فيهم رفائيل جيوڤاني بيليني وليوناردو دا ڤينتشي وابتداء من كان كي اخد الدعم من عند الإمبراطور ماكسيميليان الأول تم تشييع دورر فالكنيستين اللوثرية والأسقفية بجوج كتشمل مجموعة أعمال دورر الواسعة النقوش أسلوبو المفضل في طبعاتو الأخيرة الأعمال الفنية فالكنائس altarpieces پورتريهات پورتريهات ذاتية لوحات مائية وك النقوش الخ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>آمتدي جماعة ترابية قروية كاينة إقليم عمالة ݣلميم جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>آنفݣ جماعة ترابية قروية كاينة إقليم عمالة سيدي إيفني جهة ݣلميم واد نون ساكنين فيها واحد على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو عيون لكلام تصنيف جهة ݣلميم واد نون</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Subword tokenization refers to constructing our vocabulary using the most frequently occurring groups of letters, for instance, the word “transformer” could be split into “trans” and “former”. I find it better to use subword tokenization with a relatively smaller vocabulary size in the case of a small dataset, to avoid the p&gt;&gt;n problem (where the number of features exceeds the number of training examples), and also because if we decide to use words as our tokens, we are going to have a lot of words that appear only a few times throughout the corpus, and the model won’t be given a decent chance to learn about them.</p>
+<p>I use a maximum vocab size of 1000 specified by the <code>max_vocab_sz</code> parameter, but you can use less or more, its another hyperparamter you can tune based on the metric you care about.</p>
+<p>The data block API is provided by fastai to customize the creation of our dataloaders, <code>blocks</code> parameter is used to specify the type of our independent and dependent variables, when <code>TextBlock</code> is passed, fastai takes care of preprocessing for us, we just need to pass it our subword tokenizer since it uses word tokenization by default, we also tell fastai that we are building this for language modeling with <code>is_lm</code> and that our text is in a dataframe.</p>
+<p>And finally we create our dataloaders, it's a dataloader with s because it includes the training and validation dataloaders, the validation set is 10% of our data as we specify in our <code>RandomSplitter</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">bs</span><span class="o">=</span><span class="mi">128</span>
+
+<span class="n">tok</span> <span class="o">=</span> <span class="n">SubwordTokenizer</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">=</span><span class="n">spm_path</span><span class="p">,</span> <span class="n">max_vocab_sz</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">dls_lm</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">is_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tok</span><span class="o">=</span><span class="n">tok</span><span class="p">),</span>
+                   <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">),</span>
+                   <span class="n">get_x</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+                   <span class="p">)</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.7/dist-packages/numpy/core/_asarray.py:83: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray
+  return array(a, dtype, copy=False, order=order)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We save our dataloader since we can't afford to create it each time because of our huge dataset 😅.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">dls_path</span><span class="o">/</span><span class="s1">&#39;dls_lm.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is how our preprocessed text looks like, spaces in the original text are replaced by ▁, xxbos is a special token added by fastai to signify the beginning of a sentence, fastai also adds other special tokens to make learning easier for the model, we can see them when we check our vocab below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>text</th>
+      <th>text_</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>▁xxbos ▁بني ▁من ص ور ▁جماع ة ▁ترابية ▁قرو ية ▁كاين ة ▁إقليم ▁عمال ة ▁إقليم ▁ ش ف ش ا ون ▁جه ة ▁طنج ة ▁تطوان ▁الحسيمة ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب ▁ل إحصاء ▁لعام ▁تعليم ▁نسبة ▁لأمي ة ▁اس ▁ما ▁كايعرفو ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة</td>
+      <td>▁بني ▁من ص ور ▁جماع ة ▁ترابية ▁قرو ية ▁كاين ة ▁إقليم ▁عمال ة ▁إقليم ▁ ش ف ش ا ون ▁جه ة ▁طنج ة ▁تطوان ▁الحسيمة ▁ساكنين ▁فيها ▁واحد ▁عل ى ▁حسب ▁ل إحصاء ▁لعام ▁تعليم ▁نسبة ▁لأمي ة ▁اس ▁ما ▁كايعرفو ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة ▁اس</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>▁ديال ك م ▁لل ن س ا ▁ ون ▁ديالو ▁ ون ▁س ن ▁ديال هم ▁ ون ▁س نت ▁ديال هم ▁لل ن س ا ▁الم ل ك ية ▁لل ن س ا ▁ل لو حد ة ▁ت ن ▁ ين و ▁ديال تي ▁ت ن ▁ديال ت نا ▁ت ن ▁ديال ت ك ▁ ذ كر ▁ت ن ▁ت ن ▁ديال ت ك م ▁ت ن ▁ديال ت كي ▁م</td>
+      <td>ك م ▁لل ن س ا ▁ ون ▁ديالو ▁ ون ▁س ن ▁ديال هم ▁ ون ▁س نت ▁ديال هم ▁لل ن س ا ▁الم ل ك ية ▁لل ن س ا ▁ل لو حد ة ▁ت ن ▁ ين و ▁ديال تي ▁ت ن ▁ديال ت نا ▁ت ن ▁ديال ت ك ▁ ذ كر ▁ت ن ▁ت ن ▁ديال ت ك م ▁ت ن ▁ديال ت كي ▁م ؤ</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>▁من ▁ وف ▁ع س ف ▁خ ل ▁ؤلا ▁لخ ش ب ▁م غ لف ة ▁م زي ان ▁ طر ف ▁ل د ▁ديال ▁ب ݣر ة ▁ؤلا ▁ت ور ▁لك ور ة ▁باش ▁كي لعب و ▁جا ل ▁كت كون ▁ع اد ة ▁ت قل ▁من ▁كي لعب و ▁ بي ها ▁سا ▁و ع ب ة ▁مر ات ▁كت كون ▁خ ط ير ة ▁ ك يقدرو ▁يو ق</td>
+      <td>▁ وف ▁ع س ف ▁خ ل ▁ؤلا ▁لخ ش ب ▁م غ لف ة ▁م زي ان ▁ طر ف ▁ل د ▁ديال ▁ب ݣر ة ▁ؤلا ▁ت ور ▁لك ور ة ▁باش ▁كي لعب و ▁جا ل ▁كت كون ▁ع اد ة ▁ت قل ▁من ▁كي لعب و ▁ بي ها ▁سا ▁و ع ب ة ▁مر ات ▁كت كون ▁خ ط ير ة ▁ ك يقدرو ▁يو ق ع</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>ات ▁وال طا كس يات ▁لي ▁عند هم ▁الح ق ▁ي دخل و ▁لي ها ▁ ا ص لا ح ▁ال قص ب ة ▁م ش رو ع ▁ ا ص لا ح ▁ق صب ة ▁أ ݣ اد ير ▁أو ف لا ▁هو ▁م ش رو ع ▁إ ن طل ق ▁عام ▁وت اي هد ف ▁باش ▁ي ص ل ح ▁ اوي أ ه ل ▁الس و ار ▁د ال</td>
+      <td>▁وال طا كس يات ▁لي ▁عند هم ▁الح ق ▁ي دخل و ▁لي ها ▁ ا ص لا ح ▁ال قص ب ة ▁م ش رو ع ▁ ا ص لا ح ▁ق صب ة ▁أ ݣ اد ير ▁أو ف لا ▁هو ▁م ش رو ع ▁إ ن طل ق ▁عام ▁وت اي هد ف ▁باش ▁ي ص ل ح ▁ اوي أ ه ل ▁الس و ار ▁د ال قص</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>▁لعاط لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁مراكش ▁آسفي ▁xxbos ▁لح اج ▁لح س ين ▁الت ول الي ▁تولد ▁ت ول ال ▁مات ▁نهار ▁د ج ن بر ▁ف م ك ناس ▁كان ▁ف ن ان ▁م غرب ي ▁ديال ▁لم ل ح ون ▁الح س ين ▁الت ول الي ▁تولد ▁ف ت ول ال ▁ح دا ▁مكناس ▁و كان و ▁تي هضر و ▁بال ش ل</td>
+      <td>لين ▁اللي ▁سبق ▁ل يهوم ▁خدمو ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁مراكش ▁آسفي ▁xxbos ▁لح اج ▁لح س ين ▁الت ول الي ▁تولد ▁ت ول ال ▁مات ▁نهار ▁د ج ن بر ▁ف م ك ناس ▁كان ▁ف ن ان ▁م غرب ي ▁ديال ▁لم ل ح ون ▁الح س ين ▁الت ول الي ▁تولد ▁ف ت ول ال ▁ح دا ▁مكناس ▁و كان و ▁تي هضر و ▁بال ش ل ح</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>▁كايعرفو ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة ▁اس ▁ما ▁خدامين ش ▁تايق لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁في ▁لقطاع ▁لخاص ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁درع ة ▁تافيلالت ▁xxbos ▁إي م يل ما يس ▁جماع ة ▁ترابية ▁قرو ية ▁كاين</td>
+      <td>ش ▁يقرا و ▁ولا ▁يكتب و ▁نسبة ▁كان ▁ قاريين ▁فوق ▁ انوي ▁تانوي ▁جامع ة ▁اقتصاد ▁نسبة ▁اس ▁شيط ين ▁ يقدرو ▁ يخدمو ▁نسبة ▁لبطال ة ▁اس ▁ما ▁خدامين ش ▁تايق لبو ▁عل ى ▁خدم ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁ول ة ▁نسبة ▁اس ▁اللي ▁خدامين ▁في ▁لقطاع ▁لخاص ▁عيون ▁لكلام ▁تصنيف ▁جه ة ▁درع ة ▁تافيلالت ▁xxbos ▁إي م يل ما يس ▁جماع ة ▁ترابية ▁قرو ية ▁كاين ة</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Special tokens in fastai start with letters xx, they are useful to help our model handle the shift from original text to our preprocessed text. For example, <code>xxunk</code> is used to replace the tokens that don't exist in our vocab, 
+as it can be useful to help our model learn to deal with missing tokens.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">dls_lm</span><span class="o">.</span><span class="n">vocab</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;xxunk&#39;, &#39;xxpad&#39;, &#39;xxbos&#39;, &#39;xxeos&#39;, &#39;xxfld&#39;, &#39;xxrep&#39;, &#39;xxwrep&#39;, &#39;xxup&#39;, &#39;xxmaj&#39;, &#39;▁&#39;, &#39;ة&#39;, &#39;و&#39;, &#39;ا&#39;, &#39;▁ل&#39;, &#39;▁ال&#39;, &#39;ش&#39;, &#39;م&#39;, &#39;ات&#39;, &#39;ل&#39;, &#39;ر&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now it's time to create our language model learner, we pass it our dataloaders, and use the version of AWD_LSTM provided by fastai.</p>
+<p>Perplexity is usually used to evaluate language models, a model with a low perplexity is one that assigns a high probabilty to the correct output, in our case, the model learns by trying to predict the next token in a sequence, so the lower the perplexity the better is our model at predicting the next token correctly. Perplexity is a good metric to look at when training your language model and tuning the different hyperparamters, but i think the best way to measure the quality of a language model is to actually apply it on a task (text classifcation, question ansewring, ...) and look at your accuracy (or any other metric) going up or down.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">language_model_learner</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> 
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">Perplexity</span><span class="p">()],</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>AWD_LSTM is just LSTM layers with lots of regularization, and we can see that in the hyperparamters below in fastai's implementation, all the parameters that end with 'p' are the ammount of dropout applied to some part of the network. Other regularization techniques are also used, like <a href="https://paperswithcode.com/method/activation-regularization"><em>activation regularization</em></a> which is similar to weight decay but applied to the activations instead of the weights. 
+Another interesting technique is <a href="https://paperswithcode.com/method/weight-tying"><em>weight tying</em></a>, that is based on the intuition that out embedding layer is a mapping from <em>darija</em> to a vector representation, and our output layer is a mapping from a vector representation back to <em>darija</em>, so why not use the same weight matrix for both of them, this turn out to be a useful method to reduce the number of parameters of a language model especially when we have a huge vocabulary size.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">awd_lstm_lm_config</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;bidir&#39;: False,
+ &#39;emb_sz&#39;: 400,
+ &#39;embed_p&#39;: 0.02,
+ &#39;hidden_p&#39;: 0.15,
+ &#39;input_p&#39;: 0.25,
+ &#39;n_hid&#39;: 1152,
+ &#39;n_layers&#39;: 3,
+ &#39;out_bias&#39;: True,
+ &#39;output_p&#39;: 0.1,
+ &#39;pad_token&#39;: 1,
+ &#39;tie_weights&#39;: True,
+ &#39;weight_p&#39;: 0.2}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Time to train our model using the one cycle policy, that was introduced in <a href="https://arxiv.org/abs/1803.09820">this paper</a>. It is a method that suggests varying the learning rate linearly in two steps, one where we go from a small learning rate to a maximum learning rate that we specify (in this case <code>max_lr=1e-2</code>), then decreasing it to a lower value than the one we started with.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="data:image/png;base64,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" alt="1policy.png" /></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Starting from a low learning rate is used as a warm-up step and has the effect of allowing the model to get used to the data before jumping to a high learning rate, when we reach the maximum learning rate, it acts as a regularization that helps the model escape saddle points and avoid steep areas of the loss and prefer a flatter minimum, that we can navigate while decreasing our learning rate in the second step.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="n">n_epoch</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">lr_max</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="10" class="" max="50" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      20.00% [10/50 18:39&lt;1:14:36]
+    </div>
+    
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>perplexity</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>5.515688</td>
+      <td>5.475324</td>
+      <td>0.047372</td>
+      <td>238.727844</td>
+      <td>01:51</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>5.483952</td>
+      <td>5.467685</td>
+      <td>0.048320</td>
+      <td>236.911163</td>
+      <td>01:52</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4.817659</td>
+      <td>4.317418</td>
+      <td>0.184282</td>
+      <td>74.994751</td>
+      <td>01:52</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4.145897</td>
+      <td>4.027465</td>
+      <td>0.210001</td>
+      <td>56.118462</td>
+      <td>01:51</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3.805228</td>
+      <td>3.598531</td>
+      <td>0.272597</td>
+      <td>36.544495</td>
+      <td>01:52</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>3.457134</td>
+      <td>3.275732</td>
+      <td>0.328941</td>
+      <td>26.462589</td>
+      <td>01:52</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3.179850</td>
+      <td>3.041847</td>
+      <td>0.368637</td>
+      <td>20.943880</td>
+      <td>01:51</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>2.990458</td>
+      <td>2.920819</td>
+      <td>0.386745</td>
+      <td>18.556480</td>
+      <td>01:51</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2.897987</td>
+      <td>2.895197</td>
+      <td>0.395819</td>
+      <td>18.087059</td>
+      <td>01:51</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2.838742</td>
+      <td>2.817706</td>
+      <td>0.407951</td>
+      <td>16.738407</td>
+      <td>01:51</td>
+    </tr>
+  </tbody>
+</table><p>
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+            .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+                background: #F44336;
+            }
+        </style>
+      <progress value="96" class="" max="126" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      76.19% [96/126 01:21&lt;00:25 2.7912]
+    </div>
+    
+&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_path</span><span class="o">/</span><span class="s1">&#39;darija_lm&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Path(&#39;/content/drive/MyDrive/ml/projects/darija/models/darija_lm_100.pth&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">decoder</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;▁&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We use the predict method to generate two sentences with 100 subwords each, it will take a piece of text as input and start doing the usual work of predicting the next token. We don't just take the word with the highest probability but we randomly sample from a probability distribution (the output of the softmax), this is done because we want our model to be a little creative and not just keep repeating itself; a high temperature will smooth this probability distribution and give tokens with low probability a higher chance of being sampled.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;على حسب لإحصاء لعام&#39;</span>
+<span class="n">n_toks</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_sentences</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="p">[</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">n_toks</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sentences</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is the output of our model, we have ourselves a drunk GPT-3 😄, but we can see that it's able to generate words correctly even though we are using subwords, this is more apparent when we look at the output of our model without the decoder below.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">preds</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39; xxbos على حسب لإحصاء لعام تابعة للنظام ديال لإسلام للمنطقة لحمر فيها ربعا ليستيقلال ديالها شمال إفريقيا لجزائر وعاصمة دزاير تونس جنوب شرقي ديال تلاتة لمليون ليلى فلبلاد هي لعاصمة ديالها هي لينثان اللغة الرسمية فلبلاد هوما النݣليزية لفرانساوية لينݣليزية لفلوس اللي كاتخد هي لكولون أوݣ&#39;,
+ &#39; xxbos على حسب لإحصاء لعام تعليم نسبة لأمية اس ما كايعرفوش يقراو ولا يكتبو نسبة كان قاريين فوق انوي تانوي جامعة اقتصاد نسبة اس شيطين يقدرو يخدمو نسبة لبطالة اس ما خدامينش تايقلبو على خدمة نسبة اس اللي خدامين ولة ولا لعاطلين اللي سبق ليهوم خدمو نسبة اس اللي خدامين في لقطاع لخاص ولا لعاطلين اللي سبق ليهوم خدمو مصادر تصنيف جهة الشرق xxbos هشام السنوي خلاق دجنبر توفا كوايري مغربي&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+&lt;/div&gt;
+ 
+
+</p></div></div></div></div></div></div>
+
+
+  </div><a class="u-url" href="/ml-blog/2021/08/29/Darija-LM.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/ml-blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/ml-blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/ml-blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p></p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/issam9" title="issam9"><svg class="svg-icon grey"><use xlink:href="/ml-blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/abderrahmane-issam-05723a171" title="abderrahmane-issam-05723a171"><svg class="svg-icon grey"><use xlink:href="/ml-blog/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/abdrahman_issam" title="abdrahman_issam"><svg class="svg-icon grey"><use xlink:href="/ml-blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
