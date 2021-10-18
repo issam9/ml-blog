@@ -123,7 +123,7 @@ window.onload = wrap_img;
         
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>DziriBERT is a BERT language model trained and tested on 1.1 Million Algerian tweets, it was introduced in <a href="https://arxiv.org/abs/2109.12346">this paper</a> and is available on the Hugging Face Model Hub in <a href="https://huggingface.co/alger-ia/dziribert">this link</a>, which means it is fairly easy to use and finetune the model. In this blog post i'll show how to finetune DziriBERT for dialect detection. The dataset i will be using is one the <a href="https://msda.um6p.ma/msda_datasets">MSDA open datasets</a>, it contains tweets labelled by the country-level dialect. All of the five dialects in this dataset have their roots in Arabic, which means that there are lots of simalarities between them especially the ones that are geographically close (e.g. Moroccan and Algerian dialects).</p>
+<p>DziriBERT is a BERT language model trained and tested on 1.1 Million Algerian tweets, it was introduced in <a href="https://arxiv.org/abs/2109.12346">this paper</a> and is available on the Hugging Face Model Hub in <a href="https://huggingface.co/alger-ia/dziribert">this link</a>, which means it is fairly easy to use and finetune the model. In this blog post i'll show how to finetune DziriBERT for dialect detection. The dataset i will be using is of one the <a href="https://msda.um6p.ma/msda_datasets">MSDA open datasets</a>, it contains tweets labelled by country-level dialect. All of the five dialects in this dataset have their roots in Arabic, which means that there are lots of simalarities between them especially the ones that are geographically close (e.g. Moroccan and Algerian dialects).</p>
 
 </div>
 </div>
@@ -534,7 +534,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Tokenization is the process of splitting text into tokens, which can be words, charcaters or subwords, BERT uses an algorithm called <a href="https://paperswithcode.com/method/wordpiece">WordPiece</a> for tokenization, it's a subword tokenization algorithm that was pretrained to know which groups of characters to keep together. The most frequent word pieces are the one kept in the vocabulary of the model. We can see bellow that some words are split into pieces while some others are kept as they are. Some tokens are preceded by <code>"##"</code>, this means that that is a completion of a word and should be attached to the previous token when decoding.</p>
+<p>Tokenization is the process of splitting text into tokens, which can be words, characaters or subwords. BERT uses an algorithm called <a href="https://paperswithcode.com/method/wordpiece">WordPiece</a> for tokenization, it's a subword tokenization algorithm that was pretrained to know which groups of characters to keep together, the most frequent word pieces are the one kept in the vocabulary of the model. We can see bellow that some words are split into pieces while some others are kept as they are. Some tokens are preceded by <code>"##"</code>, this means that that is a completion of a word and should be attached to the previous token when decoding.</p>
 
 </div>
 </div>
@@ -613,7 +613,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Before feeding our inputs to the model, we need to convert them to numbers. What we see bellow is the indices of each token in the vocabilary of the pretrained DziriBERT WordPiece tokenizer. These indices will be used to retrieve the embedding vector of each token, this vector is the representation that the pretrained language model has learned for that token.</p>
+<p>Before feeding our inputs to the model, we need to convert them to numbers. What we see bellow is the index of each token in the vocabilary of the pretrained DziriBERT WordPiece tokenizer. When finetuning the model, these indices will be used to retrieve the embedding vector of each token that was learned during pretraining.</p>
 
 </div>
 </div>
@@ -652,7 +652,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A vocabulary is a dictionary that maps the tokens learned by WordPiece to indices, tokens that are not in the vocabulary are usually replaced with a special token (e.g. <code>&lt;unk&gt;</code>).</p>
+<p>A vocabulary is a dictionary that maps the tokens learned by WordPiece to indices, tokens that are not in the vocabulary are usually replaced with a special token (e.g. <code>[UNK]</code>).</p>
 
 </div>
 </div>
@@ -772,9 +772,9 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Decoding is reversing the operations that were applied to the text, but we see that there are 2 new tokens (<code>[CLS]</code> and <code>[SEP]</code>) in our sequence, these are called special tokens and their indices in the vocabulary are 2 and 3, they are added by the tokenizer and to explain why, i will talk a bit about the training objectives of BERT.</p>
+<p>Decoding is reversing the operations that were applied to the text, but we see that there are two new tokens (<code>[CLS]</code> and <code>[SEP]</code>) in our sequence, these are called special tokens and their indices in the vocabulary are 2 and 3, they are added by the tokenizer and to explain why, i will talk a bit about the training objectives of BERT.</p>
 <p>BERT language models are usually trained with two training objectives, Masked Language Modelling (MLM) and Next Sentence Prediction (NSP).</p>
-<p><strong>Masked Language Modelling (MLM)</strong> is used in most of the tranformer based models, at first, we mask a percentage of the input tokens, 15% in the original BERT but 25% in the case of DziriBERT as they state in <a href="https://arxiv.org/abs/2109.12346">their paper</a>, the reason as they mention is that DziriBERT is trained on tweets and they have a short length. The model is asked to predict the masked tokens based on their context (non-masked tokens), this way the model will learn language representations that can be useful when finetuning on downstream tasks.</p>
+<p><strong>Masked Language Modelling (MLM)</strong> is used in most if not all tranformer based models, at first, we mask a percentage of the input tokens, 15% in the original BERT but 25% in the case of DziriBERT as they state in <a href="https://arxiv.org/abs/2109.12346">their paper</a>, the reason as they mention is that DziriBERT is trained on tweets and they have a short length. The model is asked to predict the masked tokens based on their context (non-masked tokens), this way the model will learn language representations that can be useful when finetuning on downstream tasks.</p>
 <p><strong>Next Sentence Prediction</strong> is a classification task where BERT takes a pair of sentences, and tries to predict whether the second sentence is the next sentence or not. This was shown to increase the performance of BERT especially in tasks that involve pairs of sentences (e.g. Question Answering (QA) and Natural Language Inference (NLI)) as was declared in the <a href="https://arxiv.org/abs/1810.04805">BERT paper</a>. The pairs of sentences are separated by <code>[SEP]</code> token, and you can see bellow how the input of BERT should look like when doing NSP. The <code>[CLS]</code> token is used at the beginning of each input, as BERT outputs a vector representation for each token in the sequence, it will use only the representation of the <code>[CLS]</code> token to do Next Sentence Prediction. That is why this token is usually used in classification tasks like ours.</p>
 
 </div>
@@ -784,7 +784,7 @@ window.onload = wrap_img;
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><div class="flash">
     <svg class="octicon octicon-info" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
-    <strong>Note: </strong>DziriBERT is trained without NSP objective and they cite in <a href="https://arxiv.org/abs/2109.12346">the paper</a> that it was shown that it does not improve the results of downstream tasks.
+    <strong>Note: </strong>DziriBERT is trained without NSP objective, and they cite in <a href="https://arxiv.org/abs/2109.12346">the paper</a> that it was shown that it does not improve the results of downstream tasks.
 </div></p>
 
 </div>
@@ -926,7 +926,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The maximum sequence length that BERT can take is 512, but that would be too much for our case, since most sequences contain less than 40 tokens. We specify that for our tokenizer in <code>max_length</code> and set <code>truncation</code> as <code>true</code>, what this means is that any sequence longer than 40 will be truncated to <code>max_seq_len</code>. With that we will lose some informations but it will reduce the training time, and that matters a lot when training on free colab 😄.</p>
+<p>The maximum sequence length that BERT can take is 512, but that would be too much for our case, since most sequences contain less than 40 tokens. We specify that for our tokenizer in <code>max_length</code> and set <code>truncation</code> to <code>true</code>, what this means is that any sequence longer than 40 will be truncated to <code>max_seq_len</code>. With that we will lose some informations but it will reduce the training time, and that matters a lot when training on free colab 😄.</p>
 
 </div>
 </div>
@@ -939,23 +939,8 @@ window.onload = wrap_img;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-python"><pre><span></span><span class="n">max_seq_len</span> <span class="o">=</span> <span class="mi">40</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">train_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">train_texts</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_seq_len</span><span class="p">)</span>
+<span class="n">train_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">train_texts</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_seq_len</span><span class="p">)</span>
 <span class="n">val_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">val_texts</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_seq_len</span><span class="p">)</span>
 <span class="n">test_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">test_texts</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_seq_len</span><span class="p">)</span>
 </pre></div>
@@ -1008,7 +993,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To evaluate our model while training, we need to pass a function that takes the model's predictions, and compute the metrics that we care about. In our case we will compute the accuracy, f1 score, precision and recall because our dataset is umbalanced, and also to compare with the baselines in <a href="https://arxiv.org/abs/2102.11000">MSDA paper</a>.</p>
+<p>To evaluate our model while training, we need to pass a function that takes the model's predictions, and compute the metrics that we care about. In our case we will compute the accuracy, f1 score, precision and recall because our dataset is imbalanced, and also to compare with the baselines in <a href="https://arxiv.org/abs/2102.11000">MSDA paper</a>.</p>
 
 </div>
 </div>
@@ -1044,8 +1029,8 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now is time load the pretrained DziriBERT model from Hugging Face Hub. What <code>AutoModelForSequenceClassification</code> does is to remove the pretraining head of the model, and replace it with a classification head that will be initialized randomly. This classification head is just a linear layer that will take  something called <code>pooler_output</code> as input and output 5 numbers (specified in <code>num_labels</code>) for each sequence, these are called logits and they are passed through a softmax function to get probabilities when computing the loss or when computing metrics.</p>
-<p><code>pooler_output</code> is the representation of the <code>[CLS]</code> token after it was run through a linear layer followed by a tanh activation function.</p>
+<p>Now is time to load the pretrained DziriBERT model from Hugging Face Hub. What <code>AutoModelForSequenceClassification</code> does is to remove the pretraining head of the model, and replace it with a classification head that will be initialized randomly. This classification head is just a linear layer that will take  something called <code>pooler_output</code> as input and output 5 numbers (as specified in <code>num_labels</code>) for each sequence, these are called logits and they are passed through a softmax function to get probabilities when computing the loss or to when computing metrics.</p>
+<p><code>pooler_output</code> is one of the outputs of a BERT model, it is the representation of the <code>[CLS]</code> token after it was run through a linear layer followed by a tanh activation function.</p>
 
 </div>
 </div>
@@ -1129,7 +1114,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Trainer is what takes care of training our models, it takes arguments through the <code>TrainingArguments</code> class, and takes our model, datasets and the method to compute metrics and output them on a nice table during training. calling <code>train</code> will start finetuning our classification model, and what we need now is to find something to do instead of looking at the progress bar 😁.</p>
+<p>The <code>Trainer</code> is what takes care of training our models, it takes arguments through the <code>TrainingArguments</code> class, and takes our model, datasets and the method to compute metrics and output them on a nice table during training. calling <code>train</code> will start finetuning our classification model, and what we need now is to find something to do instead of looking at the progress bar 😁.</p>
 
 </div>
 </div>
@@ -1336,7 +1321,7 @@ Training completed. Do not forget to share your model on huggingface.co/models =
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>predict</code> which we pass our test dataset, returns a prediction (logits) for each sample in the dataset, and also compute the metrics that we already passed to the <code>Trainer</code>.</p>
+<p><code>predict</code> which we pass our test dataset, returns a prediction (logits) for each sample in the dataset, and also computes the metrics that we already passed to the <code>Trainer</code>.</p>
 
 </div>
 </div>
