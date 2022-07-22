@@ -4,7 +4,7 @@ description: "This post will discuss how the effectiveness of multiple regulariz
 layout: post
 toc: false
 comments: true
-hide: true
+hide: false
 categories: [NLP, Pretraining]
 ---
 
