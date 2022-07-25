@@ -1,10 +1,11 @@
 ---
 title: "Pretraining is all you need"
-description: "This post will discuss how the effectiveness of multiple regularization methods and techniques to handle noise was questioned when finetuning a pretrained Language Model."
+description: "This post will discuss how the effectiveness of multiple regularization methods and techniques to handle noise was questioned when finetuning a Pretrained Language Model."
 layout: post
 toc: false
-comments: true
-hide: true
+comments: false
+use_math: true
+hide: false
 categories: [NLP, Pretraining]
 ---
 
@@ -38,14 +39,12 @@ In Vanilla KD ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531)), we tran
 
 $$
 L_{KD} = (1 - α)H(q, p) + αD_{KL}(p_τ^t, p_τ)
-
 $$
 
 When $τ=1$, KD equation can be written such that the hard label $q(x)$ is smoothed by the teacher’s output $p^t$ to produce $q'(x)$:
 
 $$
 q'(x) = (1 - α)q(x) + αp^t 
-
 $$
 
 ### Label Smoothing (LS)
