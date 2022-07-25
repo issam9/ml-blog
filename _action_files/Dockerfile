@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM fastai/jekyll:2020-09-12
+=======
+FROM fastai/jekyll:2020-12-30
+>>>>>>> template/master
 
 WORKDIR /fastpages
 COPY . .

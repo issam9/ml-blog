@@ -44,7 +44,7 @@ minima:
     linkedin: abderrahmane-issam-05723a171
 
 # Set this to true to get LaTeX math equation support
-use_math: 
+use_math: true
 
 # Set this to true to display the summary of your blog post under your title on the Home page.
 show_description: true
@@ -59,7 +59,7 @@ annotations: false
 show_tags: true
 
 # Add your Google Analytics ID here if you have one and want to use it
-google_analytics: G-CKRG4KW9C9
+google_analytics: UA-57531313-5
 
 exclude:
   - docker-compose.yml
@@ -75,6 +75,7 @@ default_badges:
   github: true
   binder: true
   colab: true
+  deepnote: true
 
 # Escape HTML in post descriptions
 html_escape:
@@ -121,3 +122,6 @@ kramdown:
 feed:
   posts_limit: 5 #default posts_limit: 10
   excerpt_only: true
+  
+exclude:
+  - settings.ini
