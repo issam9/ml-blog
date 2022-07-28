@@ -5,7 +5,7 @@ layout: post
 toc: false
 comments: false
 use_math: true
-hide: true
+hide: false
 categories: [NLP, Pretraining]
 ---
 
