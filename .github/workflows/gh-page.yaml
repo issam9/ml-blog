@@ -1,13 +1,4 @@
 name: GH-Pages Status
-<<<<<<< HEAD
-on:
-  page_build
-  
-jobs:
-  see-page-build-payload:
-    runs-on: ubuntu-latest
-    steps:      
-=======
 on: page_build
 
 permissions:
@@ -19,7 +10,6 @@ jobs:
   see-page-build-payload:
     runs-on: ubuntu-latest
     steps:
->>>>>>> template/master
       - name: check status
         run: |
           import os
