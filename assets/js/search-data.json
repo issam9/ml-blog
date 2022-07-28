@@ -38,6 +38,26 @@
   
 
   
+      ,"page1": {
+          "title": "About Me",
+          "content": "I am Abderrahmane Issam, a Data Scientist at Archipel Cognitive. I am mostly interested in NLP for Low Resource Scenarios, Language Modeling and Representation Learning. .",
+          "url": "https://issam9.github.io/ml-blog/about/",
+          "relUrl": "/about/",
+          "date": ""
+      }
+      
+  
+
+  
+
+  
+  
+
+  
+
+  
+  
+
   
 
   
@@ -50,10 +70,7 @@
   
 
   
-  
-
-  
-      ,"page6": {
+      ,"page10": {
           "title": "",
           "content": "Sitemap: {{ “sitemap.xml” | absolute_url }} | .",
           "url": "https://issam9.github.io/ml-blog/robots.txt",
